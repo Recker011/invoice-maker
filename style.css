@@ -1,0 +1,324 @@
+:root {
+  --bg: #f5f7fb;
+  --panel: #ffffff;
+  --ink: #0f172a;
+  --muted: #6b7280;
+  --brand: #176d6c; /* teal-ish brand */
+  --ok: #10b981; /* paid */
+  --bad: #ef4444; /* unpaid */
+  --ring: #d1d5db;
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial,
+    sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+.page {
+  max-width: 1200px;
+  margin: 24px auto;
+  padding: 8px;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 24px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--ring);
+  border-radius: 16px;
+  padding: 20px 20px 28px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+.settings h2,
+.preview h2 {
+  margin: 0 0 12px;
+  font-size: 18px;
+}
+.settings h3 {
+  margin: 18px 0 6px;
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.field {
+  margin-top: 12px;
+}
+.field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.field input,
+.field select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--ring);
+  border-radius: 10px;
+  font-size: 14px;
+}
+.field.inline {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+}
+.group {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px dashed var(--ring);
+  border-radius: 12px;
+}
+.checkline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.segmented {
+  display: inline-flex;
+  gap: 10px;
+}
+.segmented input {
+  margin-right: 4px;
+}
+
+button.primary {
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px 14px;
+  border: 0;
+  color: #fff;
+  background: var(--brand);
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.hide {
+  display: none !important;
+}
+
+/* ---------- Preview / Invoice ---------- */
+
+.invoice {
+  background: #fff;
+  color: #111827;
+  border: 1px solid var(--ring);
+  border-radius: 16px;
+  padding: 30px; /* Increased padding */
+  margin-top: 8px;
+  margin-bottom: 8px;
+
+  /* A4-ish preview width */
+  width: 794px; /* 210mm at ~96dpi */
+  max-width: 100%;
+  margin-inline: auto;
+}
+
+.inv-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 20px;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 20px;
+}
+
+.brand {
+  display: flex;
+  gap: 15px; /* Increased gap */
+  align-items: center;
+}
+.brand img {
+  height: 48px;
+  width: auto;
+  border-radius: 8px;
+}
+.company h1 {
+  font-size: 18px;
+  margin: 0 0 6px;
+}
+.company {
+  margin-left: auto; /* push ACN/ABN/Contact block to right edge */
+}
+.company .meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  gap: 2px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.badge {
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  background: var(--bad);
+  color: #fff;
+  min-width: 84px;
+  text-align: center;
+}
+
+.tables {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 25px; /* Increased gap */
+  margin-top: 25px; /* Increased margin */
+}
+.table h4 {
+  margin: 0 0 8px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th,
+td {
+  padding: 10px 8px;
+  font-size: 14px;
+}
+thead th {
+  text-align: left;
+  color: var(--muted);
+  border-bottom: 1px solid #e5e7eb;
+}
+td.right,
+th.right {
+  text-align: right;
+}
+tr.total td {
+  font-weight: 800;
+  border-top: 2px solid #e5e7eb;
+}
+
+.bank-and-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 20px; /* Increased margin */
+}
+
+.bank {
+  display: flex;
+  flex-direction: column; /* Stack bank details vertically */
+  gap: 5px; /* Reduced gap */
+  font-size: 13px;
+}
+
+.kv td:first-child {
+  width: 220px;
+  color: var(--muted);
+}
+.kv td:last-child {
+  font-weight: 600;
+}
+
+@media (max-width: 980px) {
+  .page {
+    grid-template-columns: 1fr;
+  }
+  .invoice {
+    width: 100%;
+  }
+}
+
+/* --- Professional polish tweaks --- */
+.invoice {
+  line-height: 1.45;
+}
+
+/* Keep brand SVG crisp and balanced with stacked meta */
+.brand svg {
+  height: 42px;
+  width: auto;
+}
+
+/* Section headings */
+.preview h2 {
+  font-size: 14px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Table header: clearer hierarchy */
+table thead th {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+/* Table body rows: subtle separators for readability */
+table tbody tr:not(.total) td {
+  border-bottom: 1px solid #eef2f7;
+}
+
+/* Customer details key/value rows: matching separators */
+.kv tbody tr td {
+  border-bottom: 1px solid #eef2f7;
+}
+.kv tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* Space above financial summary/bank area and align badge neatly */
+.bank-and-status {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 12px;
+}
+.bank-and-status .badge {
+  align-self: center;
+  margin-left: 24px;
+}
+
+/* Tighter spacing in the stacked company meta to feel deliberate */
+.company .meta span + span {
+  margin-top: 2px;
+}
+
+/* Slightly larger total row for emphasis */
+tr.total td {
+  font-size: 15px;
+}
+
+/* Improve general cell vertical rhythm */
+th, td {
+  line-height: 1.35;
+}
+
+/* Slightly softer invoice container for on-screen viewing */
+.invoice {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+}
+
+/* Print-friendly: remove external spacing/shadows if printed */
+@media print {
+  .invoice {
+    box-shadow: none;
+    margin: 0;
+    border-radius: 0;
+  }
+}

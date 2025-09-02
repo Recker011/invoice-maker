@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>247 Victoria Cleaners — Invoice Generator</title>
+
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- jsPDF and html2canvas for client-side PDF download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <!-- App logic -->
+    <script defer src="script.js"></script>
+  </head>
+  <body>
+    <main class="page">
+      <!-- SETTINGS (left column) -->
+      <section class="panel settings">
+        <h2>Settings</h2>
+
+        <!-- Base Service -->
+        <div class="field">
+          <label for="baseService">Base Service</label>
+          <select id="baseService">
+            <option value="End of Lease Cleaning">End of Lease Cleaning</option>
+            <option value="General Cleaning">General Cleaning</option>
+            <option value="Deposit (Invoice for Deposit Only)">Deposit</option>
+            <option value="Custom">Custom…</option>
+          </select>
+        </div>
+
+        <div class="field hide" id="customServiceWrap">
+          <label for="customService">Custom Service Title</label>
+          <input
+            id="customService"
+            type="text"
+            placeholder="e.g., Post-Renovation Deep Clean"
+          />
+        </div>
+
+        <div class="field">
+          <label for="baseAmount">Base Amount ($)</label>
+          <input
+            id="baseAmount"
+            type="number"
+            min="0"
+            step="0.01"
+            value="0"
+          />
+        </div>
+
+        <!-- Addons -->
+        <div class="field">
+          <label for="addonsText">Addons (optional, description)</label>
+          <input
+            id="addonsText"
+            type="text"
+            placeholder="e.g., Oven Deep Cleaning; Carpet Cleaning"
+          />
+        </div>
+
+        <div class="field">
+          <label for="addonsAmount">Addons Amount ($)</label>
+          <input
+            id="addonsAmount"
+            type="number"
+            min="0"
+            step="0.01"
+            value="0"
+          />
+        </div>
+
+        <!-- GST -->
+        <div class="group">
+          <div class="checkline">
+            <input type="checkbox" id="gstIncluded" checked />
+            <label for="gstIncluded">Include GST</label>
+          </div>
+          <div class="field inline">
+            <label for="gstPercent">GST (%)</label>
+            <input
+              id="gstPercent"
+              type="number"
+              min="0"
+              step="0.1"
+              value="10"
+            />
+          </div>
+        </div>
+
+        <!-- Discount -->
+        <div class="group">
+          <div class="checkline">
+            <input type="checkbox" id="discountEnabled" />
+            <label for="discountEnabled">Add Discount</label>
+          </div>
+
+          <div id="discountFields" class="hide">
+            <div class="field inline">
+              <label>Type</label>
+              <div class="segmented">
+                <label for="discountPercent">
+                  <input
+                    type="radio"
+                    name="discountType"
+                    id="discountPercent"
+                    value="percent"
+                    checked
+                  />
+                  %
+                </label>
+                <label for="discountAmount">
+                  <input
+                    type="radio"
+                    name="discountType"
+                    id="discountAmount"
+                    value="amount"
+                  />
+                  $
+                </label>
+              </div>
+            </div>
+            <div class="field inline">
+              <label for="discountValue">Value</label>
+              <input
+                id="discountValue"
+                type="number"
+                min="0"
+                step="0.01"
+                value="0"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Deposit (Row 5) -->
+        <div class="field">
+          <label for="depositAmount">Deposit ($)</label>
+          <input
+            id="depositAmount"
+            type="number"
+            min="0"
+            step="0.01"
+            value="100"
+          />
+        </div>
+
+        <!-- Paid/Unpaid -->
+        <div class="field">
+          <label for="status">Status</label>
+          <select id="status">
+            <option value="PAID">Paid</option>
+            <option value="UNPAID">Unpaid</option>
+          </select>
+        </div>
+
+        <!-- Customer details -->
+        <h3>Customer Details</h3>
+        <div class="field">
+          <label for="custName">Booking Name</label>
+          <input id="custName" type="text" placeholder="e.g., Zoe" />
+        </div>
+        <div class="field">
+          <label for="cleanDate">Cleaning Date</label>
+          <input id="cleanDate" type="date" placeholder="e.g., 01/09/2025" />
+        </div>
+        <div class="field">
+          <label for="cleanLoc">Cleaning Location</label>
+          <input
+            id="cleanLoc"
+            type="text"
+            placeholder="e.g., 26 Peyton Dr, Mill Park VIC 3082"
+          />
+        </div>
+
+        <button id="downloadBtn" class="primary">Download PDF</button>
+      </section>
+
+      <!-- PREVIEW (right column) -->
+      <section class="panel preview">
+        <h2>Invoice Preview</h2>
+
+        <article id="invoice" class="invoice">
+          <!-- Header -->
+          <header class="inv-header">
+            <div class="brand">
+              <svg width="150" height="45" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="200" height="60" rx="10" fill="#2A7F7F"/>
+                <circle cx="30" cy="30" r="20" stroke="white" stroke-width="2"/>
+                <text x="30" y="38" font-family="Inter, sans-serif" font-size="20" fill="white" text-anchor="middle" font-weight="bold">247</text>
+                <text x="70" y="28" font-family="Inter, sans-serif" font-size="16" fill="white" font-weight="bold">VICTORIA</text>
+                <text x="70" y="48" font-family="Inter, sans-serif" font-size="16" fill="white" font-weight="bold">CLEANERS</text>
+              </svg>
+            </div>
+            <div class="company">
+              <div class="meta">
+                <span>ACN: 686 808 051</span>
+                <span>ABN: 75 686 808 051</span>
+                <span>Contact: 1300 127 486</span>
+              </div>
+            </div>
+          </header>
+
+          <!-- Tables -->
+          <div class="tables">
+            <section class="table">
+              <h4>INVOICE DETAILS</h4>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Description</th>
+                    <th class="right">Amount</th>
+                  </tr>
+                </thead>
+                <tbody id="rows">
+                  <!-- Row 1: Base -->
+                  <tr id="rowBase">
+                    <td id="baseDesc">End Of Lease Cleaning</td>
+                    <td class="right" id="baseAmt">$0.00</td>
+                  </tr>
+                  <!-- Row 2: Addons (optional) -->
+                  <tr id="rowAddons" class="hide">
+                    <td id="addonsDesc">Addons</td>
+                    <td class="right" id="addonsAmt">$0.00</td>
+                  </tr>
+                  <!-- Row 3: GST -->
+                  <tr id="rowGST">
+                    <td id="gstDesc">GST (10%)</td>
+                    <td class="right" id="gstAmt">$0.00</td>
+                  </tr>
+                  <!-- Row 4: Discount (optional) -->
+                  <tr id="rowDiscount" class="hide">
+                    <td id="discountDesc">Discount</td>
+                    <td class="right" id="discountAmt">-$0.00</td>
+                  </tr>
+                  <!-- Row 5: Deposit (always shown by default) -->
+                  <tr id="rowDeposit">
+                    <td>Deposit</td>
+                    <td class="right" id="depositAmt">-$100.00</td>
+                  </tr>
+                  <!-- Row 6: Total -->
+                  <tr class="total">
+                    <td>Total</td>
+                    <td class="right" id="totalAmt">$0.00</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="bank-and-status">
+                <div class="bank">
+                  <div><strong>Account Name:</strong> 247 Victoria Cleaners</div>
+                  <div><strong>BSB:</strong> 033186</div>
+                  <div><strong>Account:</strong> 788692</div>
+                </div>
+                <div class="badge" id="badge">UNPAID</div>
+              </div>
+            </section>
+
+            <section class="table">
+              <h4>CUSTOMER DETAILS</h4>
+              <table class="kv">
+                <tbody>
+                  <tr>
+                    <td>Booking Name</td>
+                    <td id="kvName">—</td>
+                  </tr>
+                  <tr>
+                    <td>Cleaning Date</td>
+                    <td id="kvDate">—</td>
+                  </tr>
+                  <tr>
+                    <td>Cleaning location / Site</td>
+                    <td id="kvLoc">—</td>
+                  </tr>
+                </tbody>
+              </table>
+            </section>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>
