@@ -24,13 +24,16 @@ const addonsText = el("addonsText");
 const addonsAmount = el("addonsAmount");
 
 const gstIncluded = el("gstIncluded");
-const gstPercent = el("gstPercent");
+const gstAmountInput = el("gstAmount");
 
 const discountEnabled = el("discountEnabled");
 const discountFields = el("discountFields");
-const discountValue = el("discountValue");
+const discountAmountInput = el("discountAmountInput");
 const statusSel = el("status");
 const depositAmount = el("depositAmount");
+const depositShown = el("depositShown");
+
+const totalOverride = el("totalOverride");
 
 const downloadBtn = el("downloadBtn");
 
@@ -73,18 +76,15 @@ function currentBaseTitle() {
   return baseService.value;
 }
 
-function discountType() {
-  const selected = document.querySelector('input[name="discountType"]:checked');
-  return selected ? selected.value : "percent";
-}
+/* Manual mode: discount type not used */
 
-/* Calculation aligned with your existing calculator (GST 10% default, discount before GST, deposit after) */
+/* Manual rendering: no automatic calculations */
 function recalcAndRender() {
   // Titles / status
   const title = currentBaseTitle();
   baseDesc.textContent = title;
 
-  // Base/Addons numbers
+  // Base/Addons numbers (direct)
   const base = parseFloat(baseAmount.value || "0");
   const addons = parseFloat(addonsAmount.value || "0");
 
@@ -98,22 +98,14 @@ function recalcAndRender() {
     rowAddons.classList.add("hide");
   }
 
-  // Discount
-  let discount = 0;
+  // Discount (manual)
   if (discountEnabled.checked) {
-    const val = Math.max(0, parseFloat(discountValue.value || "0"));
-    if (val > 0) {
-      discountFields.classList.remove("hide");
-      const type = discountType();
-      if (type === "percent") {
-        discount = (base + addons) * (val / 100);
-        discountDesc.textContent = `Discount (${val}%)`;
-      } else {
-        discount = Math.min(val, base + addons);
-        discountDesc.textContent = `Discount`;
-      }
+    discountFields.classList.remove("hide");
+    const dVal = Math.max(0, parseFloat(discountAmountInput.value || "0"));
+    if (dVal > 0) {
       rowDiscount.classList.remove("hide");
-      discountAmt.textContent = `-${fmt(discount).replace("$", "")}`;
+      discountDesc.textContent = "Discount";
+      discountAmt.textContent = `-${fmt(dVal).replace("$", "")}`;
     } else {
       rowDiscount.classList.add("hide");
     }
@@ -122,31 +114,27 @@ function recalcAndRender() {
     rowDiscount.classList.add("hide");
   }
 
-  // GST
-  let gst = 0;
+  // GST (manual show/hide + amount)
   if (gstIncluded.checked) {
-    const pct = Math.max(0, parseFloat(gstPercent.value || "10"));
-    const taxable = Math.max(0, base + addons - discount);
-    gst = taxable * (pct / 100);
     rowGST.classList.remove("hide");
-    gstDesc.textContent = `GST (${pct}%)`;
-    gstAmt.textContent = fmt(gst);
+    const gVal = Math.max(0, parseFloat(gstAmountInput.value || "0"));
+    gstDesc.textContent = "GST";
+    gstAmt.textContent = fmt(gVal);
   } else {
     rowGST.classList.add("hide");
   }
 
-  // Separate deposit row (unless base service is explicitly "Deposit")
-  let deposit = Math.max(0, parseFloat(depositAmount.value || "0"));
-  if (title.toLowerCase() === "deposit") {
-    deposit = 0;
-    rowDeposit.classList.add("hide");
-  } else {
+  // Deposit row (manual show/hide)
+  if (depositShown.checked) {
     rowDeposit.classList.remove("hide");
-    depositAmt.textContent = `-${fmt(deposit).replace("$", "")}`;
+    const dep = Math.max(0, parseFloat(depositAmount.value || "0"));
+    depositAmt.textContent = `-${fmt(dep).replace("$", "")}`;
+  } else {
+    rowDeposit.classList.add("hide");
   }
 
-  // Totals
-  const total = Math.max(0, base + addons - discount + gst - deposit);
+  // Totals (manual override)
+  const total = Math.max(0, parseFloat(totalOverride.value || "0"));
   baseAmt.textContent = fmt(base);
   totalAmt.textContent = fmt(total);
 
@@ -169,19 +157,19 @@ function recalcAndRender() {
   addonsText,
   addonsAmount,
   gstIncluded,
-  gstPercent,
+  gstAmountInput,
   discountEnabled,
-  discountValue,
+  discountAmountInput,
   statusSel,
   depositAmount,
+  depositShown,
+  totalOverride,
   custName,
   cleanDate,
   cleanLoc,
 ].forEach((ctrl) => ctrl.addEventListener("input", onInput));
 
-document
-  .querySelectorAll('input[name="discountType"]')
-  .forEach((r) => r.addEventListener("change", recalcAndRender));
+/* Manual mode: no discount type radios */
 
 function onInput() {
   // Show custom field iff "Custom" selected

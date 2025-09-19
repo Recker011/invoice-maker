@@ -86,13 +86,13 @@
             <label for="gstIncluded">Include GST</label>
           </div>
           <div class="field inline">
-            <label for="gstPercent">GST (%)</label>
+            <label for="gstAmount">GST Amount ($)</label>
             <input
-              id="gstPercent"
+              id="gstAmount"
               type="number"
               min="0"
-              step="0.1"
-              value="10"
+              step="0.01"
+              value="0"
             />
           </div>
         </div>
@@ -106,33 +106,9 @@
 
           <div id="discountFields" class="hide">
             <div class="field inline">
-              <label>Type</label>
-              <div class="segmented">
-                <label for="discountPercent">
-                  <input
-                    type="radio"
-                    name="discountType"
-                    id="discountPercent"
-                    value="percent"
-                    checked
-                  />
-                  %
-                </label>
-                <label for="discountAmount">
-                  <input
-                    type="radio"
-                    name="discountType"
-                    id="discountAmount"
-                    value="amount"
-                  />
-                  $
-                </label>
-              </div>
-            </div>
-            <div class="field inline">
-              <label for="discountValue">Value</label>
+              <label for="discountAmountInput">Discount Amount ($)</label>
               <input
-                id="discountValue"
+                id="discountAmountInput"
                 type="number"
                 min="0"
                 step="0.01"
@@ -140,6 +116,11 @@
               />
             </div>
           </div>
+        </div>
+
+        <div class="checkline">
+          <input type="checkbox" id="depositShown" checked />
+          <label for="depositShown">Show Deposit Row</label>
         </div>
 
         <!-- Deposit (Row 5) -->
@@ -179,6 +160,17 @@
             id="cleanLoc"
             type="text"
             placeholder="e.g., 26 Peyton Dr, Mill Park VIC 3082"
+          />
+        </div>
+
+        <div class="field">
+          <label for="totalOverride">Total Amount ($)</label>
+          <input
+            id="totalOverride"
+            type="number"
+            min="0"
+            step="0.01"
+            value="0"
           />
         </div>
 
